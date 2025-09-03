@@ -1,15 +1,27 @@
-#![feature(min_const_generics)]
+#![cfg_attr(not(feature = "native"), no_main)]
+#![cfg_attr(not(feature = "native"), no_std)]
+extern crate alloc;
 
 use polybench_rs::medley::deriche::bench;
+use talc::*;
 
-fn bench_and_print<const H: usize, const W: usize>() {
-    let dims = format!("{:?}", (H, W));
-    let elapsed = bench::<H, W>().as_secs_f64();
-    println!("{:<14} | {:<30} | {:.7} s", "deriche", dims, elapsed);
+const SIZE: usize = 64 * 1024 * 1024;
+static mut ARENA: [u8; SIZE] = [0; SIZE];
+#[global_allocator]
+static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
+    Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
+        .lock();
+
+#[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
+#[unsafe(no_mangle)]
+pub extern "C" fn run() {
+    bench::<4096, 2160>();
 }
 
+#[cfg(feature = "native")]
 fn main() {
-    bench_and_print::<1024, 540>();
-    bench_and_print::<2048, 1080>();
-    bench_and_print::<4096, 2160>();
+    let now = std::time::Instant::now();
+    bench::<4096, 2160>();
+    let elapsed = now.elapsed();
+    print!("{}", elapsed.as_nanos());
 }

@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::blas::gemm::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const NI: usize, const NJ: usize, const NK: usize>(
     ni: usize,
@@ -54,7 +53,7 @@ unsafe fn kernel_gemm<const NI: usize, const NJ: usize, const NK: usize>(
     }
 }
 
-pub fn bench<const NI: usize, const NJ: usize, const NK: usize>() -> Duration {
+pub fn bench<const NI: usize, const NJ: usize, const NK: usize>() {
     let ni = NI;
     let nj = NJ;
     let nk = NK;
@@ -67,13 +66,13 @@ pub fn bench<const NI: usize, const NJ: usize, const NK: usize>() -> Duration {
 
     unsafe {
         init_array(ni, nj, nk, &mut alpha, &mut beta, &mut C, &mut A, &mut B);
-        let elapsed = util::time_function(|| kernel_gemm(ni, nj, nk, alpha, beta, &mut C, &A, &B));
+        kernel_gemm(ni, nj, nk, alpha, beta, &mut C, &A, &B);
         util::consume(C);
-        elapsed
     }
 }
 
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<10, 11, 12>();
 }

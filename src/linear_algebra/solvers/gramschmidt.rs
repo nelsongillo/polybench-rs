@@ -2,8 +2,7 @@
 
 use crate::config::linear_algebra::solvers::gramschmidt::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util;
-use std::time::Duration;
+use crate::{Float, util};
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -37,7 +36,7 @@ unsafe fn kernel_gramschmidt<const M: usize, const N: usize>(
         for i in 0..m {
             nrm += A[i][k] * A[i][k];
         }
-        R[k][k] = nrm.sqrt();
+        R[k][k] = Float::sqrt(nrm);
         for i in 0..m {
             Q[i][k] = A[i][k] / R[k][k];
         }
@@ -53,7 +52,7 @@ unsafe fn kernel_gramschmidt<const M: usize, const N: usize>(
     }
 }
 
-pub fn bench<const M: usize, const N: usize>() -> Duration {
+pub fn bench<const M: usize, const N: usize>() {
     let m = M;
     let n = N;
 
@@ -63,15 +62,14 @@ pub fn bench<const M: usize, const N: usize>() -> Duration {
 
     unsafe {
         init_array(m, n, &mut A, &mut R, &mut Q);
-        let elapsed = util::time_function(|| kernel_gramschmidt(m, n, &mut A, &mut R, &mut Q));
+        kernel_gramschmidt(m, n, &mut A, &mut R, &mut Q);
         util::consume(A);
         util::consume(R);
         util::consume(Q);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<10, 12>();
 }

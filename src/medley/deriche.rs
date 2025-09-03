@@ -1,7 +1,9 @@
+use core::iter::Iterator;
+
+use crate::Float;
 use crate::config::medley::deriche::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const H: usize, const W: usize>(
     w: usize,
@@ -37,18 +39,18 @@ unsafe fn kernel_deriche<const H: usize, const W: usize>(
     let mut yp1;
     let mut yp2;
 
-    let k = (1.0 - (-alpha).exp()) * (1.0 - (-alpha).exp())
-        / (1.0 + 2.0 * alpha * (-alpha).exp() - ((2.0) * alpha).exp());
+    let k = (1.0 - Float::exp(-alpha)) * (1.0 - Float::exp(-alpha))
+        / (1.0 + 2.0 * alpha * Float::exp(-alpha) - ((2.0) * Float::exp(alpha)));
     let a5 = k;
     let a1 = a5;
-    let a6 = k * (-alpha).exp() * (alpha - 1.0);
+    let a6 = k * Float::exp(-alpha) * (alpha - 1.0);
     let a2 = a6;
-    let a7 = k * (-alpha).exp() * (alpha + 1.0);
+    let a7 = k * Float::exp(-alpha) * (alpha + 1.0);
     let a3 = a7;
-    let a8 = -k * (-2.0 * alpha).exp();
+    let a8 = -k * Float::exp(-2.0 * alpha);
     let a4 = a8;
-    let b1 = (2.0 as DataType).powf(-alpha);
-    let b2 = -(-2.0 * alpha).exp();
+    let b1 = Float::powf(2.0 as DataType, -alpha);
+    let b2 = -Float::exp(-2.0 * alpha);
     let c2 = 1.0;
     let c1 = c2;
 
@@ -117,7 +119,7 @@ unsafe fn kernel_deriche<const H: usize, const W: usize>(
     }
 }
 
-pub fn bench<const H: usize, const W: usize>() -> Duration {
+pub fn bench<const H: usize, const W: usize>() {
     let w = W;
     let h = H;
 
@@ -129,15 +131,12 @@ pub fn bench<const H: usize, const W: usize>() -> Duration {
 
     unsafe {
         init_array(w, h, &mut alpha, &mut img_in);
-        let elapsed = util::time_function(|| {
-            kernel_deriche(w, h, alpha, &img_in, &mut img_out, &mut y1, &mut y2)
-        });
+        kernel_deriche(w, h, alpha, &img_in, &mut img_out, &mut y1, &mut y2);
         util::consume(img_out);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<16, 9>();
 }

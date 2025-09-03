@@ -1,15 +1,29 @@
-#![feature(min_const_generics)]
+#![cfg_attr(not(feature = "native"), no_main)]
+#![cfg_attr(not(feature = "native"), no_std)]
+extern crate alloc;
 
 use polybench_rs::stencils::heat_3d::bench;
 
-fn bench_and_print<const N: usize, const TSTEPS: usize>() {
-    let dims = format!("{:?}", (N, TSTEPS));
-    let elapsed = bench::<N, TSTEPS>().as_secs_f64();
-    println!("{:<14} | {:<30} | {:.7} s", "heat_3d", dims, elapsed);
+use talc::*;
+
+const SIZE: usize = 64 * 1024 * 1024;
+static mut ARENA: [u8; SIZE] = [0; SIZE];
+#[global_allocator]
+static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
+    Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
+        .lock();
+
+#[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
+#[cfg_attr(feature = "wasm", inline)]
+#[cfg(not(feature = "native"))]
+pub extern "C" fn run() {
+    bench::<120, 500>();
 }
 
+#[cfg(feature = "native")]
 fn main() {
-    bench_and_print::<30, 125>();
-    bench_and_print::<60, 250>();
-    bench_and_print::<120, 500>();
+    let now = std::time::Instant::now();
+    bench::<120, 500>();
+    let elapsed = now.elapsed();
+    print!("{}", elapsed.as_nanos());
 }

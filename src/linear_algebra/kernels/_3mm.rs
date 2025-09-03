@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::kernels::_3mm::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<
     const NI: usize,
@@ -96,7 +95,7 @@ pub fn bench<
     const NK: usize,
     const NL: usize,
     const NM: usize,
->() -> Duration {
+>() {
     let ni = NI;
     let nj = NJ;
     let nk = NK;
@@ -113,15 +112,13 @@ pub fn bench<
 
     unsafe {
         init_array(ni, nj, nk, nl, nm, &mut A, &mut B, &mut C, &mut D);
-        let elapsed = util::time_function(|| {
-            kernel_3mm(ni, nj, nk, nl, nm, &mut E, &A, &B, &mut F, &C, &D, &mut G)
-        });
+        kernel_3mm(ni, nj, nk, nl, nm, &mut E, &A, &B, &mut F, &C, &D, &mut G);
         util::consume(G);
-        elapsed
     }
 }
 
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<8, 9, 10, 11, 12>();
 }

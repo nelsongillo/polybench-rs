@@ -1,7 +1,6 @@
 use crate::config::datamining::covariance::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -51,7 +50,7 @@ unsafe fn kernel_covariance<const M: usize, const N: usize>(
     }
 }
 
-pub fn bench<const M: usize, const N: usize>() -> Duration {
+pub fn bench<const M: usize, const N: usize>() {
     let m = M;
     let n = N;
 
@@ -62,15 +61,13 @@ pub fn bench<const M: usize, const N: usize>() -> Duration {
 
     unsafe {
         init_array(m, n, &mut float_n, &mut data);
-        let elapsed = util::time_function(|| {
-            kernel_covariance(m, n, float_n, &mut data, &mut cov, &mut mean)
-        });
+        kernel_covariance(m, n, float_n, &mut data, &mut cov, &mut mean);
         util::consume(cov);
-        elapsed
     }
 }
 
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<12, 14>();
 }

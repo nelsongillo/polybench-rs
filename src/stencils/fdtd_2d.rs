@@ -1,7 +1,6 @@
 use crate::config::stencils::fdtd_2d::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const NX: usize, const NY: usize, const TMAX: usize>(
     tmax: usize,
@@ -55,7 +54,7 @@ unsafe fn kernel_fdtd_2d<const NX: usize, const NY: usize, const TMAX: usize>(
     }
 }
 
-pub fn bench<const NX: usize, const NY: usize, const TMAX: usize>() -> Duration {
+pub fn bench<const NX: usize, const NY: usize, const TMAX: usize>() {
     let tmax = TMAX;
     let nx = NX;
     let ny = NY;
@@ -67,16 +66,14 @@ pub fn bench<const NX: usize, const NY: usize, const TMAX: usize>() -> Duration 
 
     unsafe {
         init_array(tmax, nx, ny, &mut ex, &mut ey, &mut hz, &mut fict);
-        let elapsed =
-            util::time_function(|| kernel_fdtd_2d(tmax, nx, ny, &mut ex, &mut ey, &mut hz, &fict));
+        kernel_fdtd_2d(tmax, nx, ny, &mut ex, &mut ey, &mut hz, &fict);
         util::consume(ex);
         util::consume(ey);
         util::consume(hz);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<10, 12, 5>();
 }

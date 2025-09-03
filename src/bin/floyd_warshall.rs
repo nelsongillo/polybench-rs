@@ -1,15 +1,27 @@
-#![feature(min_const_generics)]
+#![cfg_attr(not(feature = "native"), no_main)]
+#![cfg_attr(not(feature = "native"), no_std)]
+extern crate alloc;
 
 use polybench_rs::medley::floyd_warshall::bench;
+use talc::*;
 
-fn bench_and_print<const N: usize>() {
-    let dims = format!("{:?}", (N));
-    let elapsed = bench::<N>().as_secs_f64();
-    println!("{:<14} | {:<30} | {:.7} s", "floyd_warshall", dims, elapsed);
+const SIZE: usize = 64 * 1024 * 1024;
+static mut ARENA: [u8; SIZE] = [0; SIZE];
+#[global_allocator]
+static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
+    Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
+        .lock();
+
+#[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
+#[unsafe(no_mangle)]
+pub extern "C" fn run() {
+    bench::<2000>();
 }
 
+#[cfg(feature = "native")]
 fn main() {
-    bench_and_print::<500>();
-    bench_and_print::<1000>();
-    bench_and_print::<2000>();
+    let now = std::time::Instant::now();
+    bench::<2000>();
+    let elapsed = now.elapsed();
+    print!("{}", elapsed.as_nanos());
 }

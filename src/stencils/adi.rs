@@ -1,9 +1,9 @@
 #![allow(non_snake_case)]
+use core::iter::Iterator;
 
 use crate::config::stencils::adi::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize, const TSTEPS: usize>(
     n: usize,
@@ -77,7 +77,7 @@ unsafe fn kernel_adi<const N: usize, const TSTEPS: usize>(
     }
 }
 
-pub fn bench<const N: usize, const TSTEPS: usize>() -> Duration {
+pub fn bench<const N: usize, const TSTEPS: usize>() {
     let n = N;
     let tsteps = TSTEPS;
 
@@ -88,15 +88,12 @@ pub fn bench<const N: usize, const TSTEPS: usize>() -> Duration {
 
     unsafe {
         init_array::<N, TSTEPS>(n, &mut u);
-        let elapsed = util::time_function(|| {
-            kernel_adi::<N, TSTEPS>(tsteps, n, &mut u, &mut v, &mut p, &mut q)
-        });
+        kernel_adi::<N, TSTEPS>(tsteps, n, &mut u, &mut v, &mut p, &mut q);
         util::consume(u);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<10, 5>();
 }

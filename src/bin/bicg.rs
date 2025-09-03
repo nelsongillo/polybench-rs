@@ -1,15 +1,27 @@
-#![feature(min_const_generics)]
+#![cfg_attr(not(feature = "native"), no_main)]
+#![cfg_attr(not(feature = "native"), no_std)]
+extern crate alloc;
+use talc::*;
 
 use polybench_rs::linear_algebra::kernels::bicg::bench;
 
-fn bench_and_print<const M: usize, const N: usize>() {
-    let dims = format!("{:?}", (M, N));
-    let elapsed = bench::<M, N>().as_secs_f64();
-    println!("{:<14} | {:<30} | {:.7} s", "bicg", dims, elapsed);
+const SIZE: usize = 64 * 1024 * 1024;
+static mut ARENA: [u8; SIZE] = [0; SIZE];
+#[global_allocator]
+static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
+    Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
+        .lock();
+
+#[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
+#[unsafe(no_mangle)]
+pub extern "C" fn run() {
+    bench::<1900, 2100>();
 }
 
+#[cfg(feature = "native")]
 fn main() {
-    bench_and_print::<475, 525>();
-    bench_and_print::<950, 1050>();
-    bench_and_print::<1900, 2100>();
+    let now = std::time::Instant::now();
+    bench::<1900, 2100>();
+    let elapsed = now.elapsed();
+    print!("{}", elapsed.as_nanos());
 }

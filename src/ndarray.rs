@@ -1,5 +1,7 @@
-use std::fmt;
-use std::ops::{self, Index, IndexMut};
+use alloc::boxed::Box;
+use core::debug_assert;
+use core::marker::{Copy, Sized};
+use core::ops::{self, Index, IndexMut};
 
 #[repr(C, align(32))]
 pub struct Array1D<T, const M: usize>(pub [T; M]);
@@ -89,17 +91,17 @@ where
 
 pub trait ArrayAlloc: Sized {
     fn uninit() -> Box<Self> {
-        let layout = std::alloc::Layout::new::<Self>();
+        let layout = core::alloc::Layout::new::<Self>();
         unsafe {
-            let raw = std::alloc::alloc(layout) as *mut Self;
+            let raw = alloc::alloc::alloc(layout) as *mut Self;
             Box::from_raw(raw)
         }
     }
 
     fn zeroed() -> Box<Self> {
-        let layout = std::alloc::Layout::new::<Self>();
+        let layout = core::alloc::Layout::new::<Self>();
         unsafe {
-            let raw = std::alloc::alloc_zeroed(layout) as *mut Self;
+            let raw = alloc::alloc::alloc_zeroed(layout) as *mut Self;
             Box::from_raw(raw)
         }
     }
@@ -109,11 +111,12 @@ impl<T, const N: usize> ArrayAlloc for Array1D<T, N> {}
 impl<T, const M: usize, const N: usize> ArrayAlloc for Array2D<T, M, N> {}
 impl<T, const M: usize, const N: usize, const P: usize> ArrayAlloc for Array3D<T, M, N, P> {}
 
-impl<T, const N: usize> fmt::Display for Array1D<T, N>
+#[cfg(feature = "native")]
+impl<T, const N: usize> core::fmt::Display for Array1D<T, N>
 where
-    T: fmt::Display,
+    T: core::fmt::Display,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "[")?;
         for x in &self.0[..(self.0.len() - 1)] {
             write!(f, "{}, ", x)?;
@@ -125,11 +128,12 @@ where
     }
 }
 
-impl<T, const M: usize, const N: usize> fmt::Display for Array2D<T, M, N>
+#[cfg(feature = "native")]
+impl<T, const M: usize, const N: usize> core::fmt::Display for Array2D<T, M, N>
 where
-    T: fmt::Display,
+    T: core::fmt::Display,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "[")?;
         for x in &self.0[..(self.0.len() - 1)] {
             write!(f, "{}, ", x)?;
@@ -141,11 +145,12 @@ where
     }
 }
 
-impl<T, const M: usize, const N: usize, const P: usize> fmt::Display for Array3D<T, M, N, P>
+#[cfg(feature = "native")]
+impl<T, const M: usize, const N: usize, const P: usize> core::fmt::Display for Array3D<T, M, N, P>
 where
-    T: fmt::Display,
+    T: core::fmt::Display,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "[")?;
         for x in &self.0[..(self.0.len() - 1)] {
             write!(f, "{}, ", x)?;
@@ -160,9 +165,9 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::mem::size_of;
+    use core::mem::size_of;
 
-    #[test]
+    #[cfg_attr(test, test)]
     fn check_array_sizes() {
         assert_eq!(1024, size_of::<Array1D<u8, 1024>>());
         assert_eq!(8388608, size_of::<Array2D<f64, 1024, 1024>>());

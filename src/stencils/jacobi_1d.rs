@@ -3,7 +3,6 @@
 use crate::config::stencils::jacobi_1d::DataType;
 use crate::ndarray::{Array1D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize, const TSTEPS: usize>(
     n: usize,
@@ -32,7 +31,7 @@ unsafe fn kernel_jacobi_1d<const N: usize, const TSTEPS: usize>(
     }
 }
 
-pub fn bench<const N: usize, const TSTEPS: usize>() -> Duration {
+pub fn bench<const N: usize, const TSTEPS: usize>() {
     let n = N;
     let tsteps = TSTEPS;
 
@@ -41,14 +40,12 @@ pub fn bench<const N: usize, const TSTEPS: usize>() -> Duration {
 
     unsafe {
         init_array::<N, TSTEPS>(n, &mut A, &mut B);
-        let elapsed =
-            util::time_function(|| kernel_jacobi_1d::<N, TSTEPS>(tsteps, n, &mut A, &mut B));
+        kernel_jacobi_1d::<N, TSTEPS>(tsteps, n, &mut A, &mut B);
         util::consume(A);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<20, 5>();
 }

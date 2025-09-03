@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::kernels::doitgen::DataType;
 use crate::ndarray::{Array1D, Array2D, Array3D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const NP: usize, const NQ: usize, const NR: usize>(
     nr: usize,
@@ -49,7 +48,7 @@ unsafe fn kernel_doitgen<const NP: usize, const NQ: usize, const NR: usize>(
     }
 }
 
-pub fn bench<const NP: usize, const NQ: usize, const NR: usize>() -> Duration {
+pub fn bench<const NP: usize, const NQ: usize, const NR: usize>() {
     let nr = NR;
     let nq = NQ;
     let np = NP;
@@ -60,13 +59,12 @@ pub fn bench<const NP: usize, const NQ: usize, const NR: usize>() -> Duration {
 
     unsafe {
         init_array(nr, nq, np, &mut A, &mut C4);
-        let elapsed = util::time_function(|| kernel_doitgen(nr, nq, np, &mut A, &C4, &mut sum));
+        kernel_doitgen(nr, nq, np, &mut A, &C4, &mut sum);
         util::consume(A);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<6, 4, 5>();
 }

@@ -1,9 +1,10 @@
 #![allow(non_snake_case)]
 
+use core::iter::Iterator;
+
 use crate::config::linear_algebra::solvers::ludcmp::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize>(
     n: usize,
@@ -75,7 +76,7 @@ unsafe fn kernel_ludcmp<const N: usize>(
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut A = Array2D::<DataType, N, N>::uninit();
@@ -85,13 +86,12 @@ pub fn bench<const N: usize>() -> Duration {
 
     unsafe {
         init_array(n, &mut A, &mut b, &mut x, &mut y);
-        let elapsed = util::time_function(|| kernel_ludcmp(n, &mut A, &b, &mut x, &mut y));
+        kernel_ludcmp(n, &mut A, &b, &mut x, &mut y);
         util::consume(x);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<20>();
 }

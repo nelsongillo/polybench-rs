@@ -1,7 +1,8 @@
+use core::iter::Iterator;
+
 use crate::config::medley::nussinov::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 type Base = i8;
 
@@ -27,18 +28,10 @@ unsafe fn kernel_nussinov<const N: usize>(
     table: &mut Array2D<DataType, N, N>,
 ) {
     let match_base = |b1, b2| {
-        if b1 + b2 == 3 {
-            1
-        } else {
-            0
-        }
+        if b1 + b2 == 3 { 1 } else { 0 }
     };
     let max_score = |s1, s2| {
-        if s1 >= s2 {
-            s1
-        } else {
-            s2
-        }
+        if s1 >= s2 { s1 } else { s2 }
     };
 
     for i in (0..n).rev() {
@@ -72,7 +65,7 @@ unsafe fn kernel_nussinov<const N: usize>(
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut seq = Array1D::uninit();
@@ -80,13 +73,12 @@ pub fn bench<const N: usize>() -> Duration {
 
     unsafe {
         init_array(n, &mut seq, &mut table);
-        let elapsed = util::time_function(|| kernel_nussinov(n, &seq, &mut table));
+        kernel_nussinov(n, &seq, &mut table);
         util::consume(table);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<25>();
 }

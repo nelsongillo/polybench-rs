@@ -1,21 +1,29 @@
-#![feature(min_const_generics)]
+#![cfg_attr(not(feature = "native"), no_main)]
+#![cfg_attr(not(feature = "native"), no_std)]
+extern crate alloc;
+extern crate core;
+
+use talc::*;
+
+const SIZE: usize = 64 * 1024 * 1024;
+static mut ARENA: [u8; SIZE] = [0; SIZE];
+#[global_allocator]
+static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
+    Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
+        .lock();
 
 use polybench_rs::linear_algebra::kernels::_3mm::bench;
 
-fn bench_and_print<
-    const A: usize,
-    const B: usize,
-    const C: usize,
-    const D: usize,
-    const E: usize,
->() {
-    let dims = format!("{:?}", (A, B, C, D, E));
-    let elapsed = bench::<A, B, C, D, E>().as_secs_f64();
-    println!("{:<14} | {:<30} | {:.7} s", "3mm", dims, elapsed);
+#[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
+#[unsafe(no_mangle)]
+pub extern "C" fn run() {
+    bench::<800, 900, 1000, 1100, 1200>();
 }
 
+#[cfg(feature = "native")]
 fn main() {
-    bench_and_print::<200, 225, 250, 275, 300>();
-    bench_and_print::<400, 450, 500, 550, 600>();
-    bench_and_print::<800, 900, 1000, 1100, 1200>();
+    let now = std::time::Instant::now();
+    bench::<800, 900, 1000, 1100, 1200>();
+    let elapsed = now.elapsed();
+    print!("{}", elapsed.as_nanos());
 }

@@ -1,7 +1,6 @@
 use crate::config::medley::floyd_warshall::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize>(n: usize, path: &mut Array2D<DataType, N, N>) {
     for i in 0..n {
@@ -28,20 +27,20 @@ unsafe fn kernel_floyd_warshall<const N: usize>(n: usize, path: &mut Array2D<Dat
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut path = Array2D::<DataType, N, N>::uninit();
 
     unsafe {
         init_array(n, &mut path);
-        let elapsed = util::time_function(|| kernel_floyd_warshall(n, &mut path));
+        kernel_floyd_warshall(n, &mut path);
         util::consume(path);
-        elapsed
     }
 }
 
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<28>();
 }

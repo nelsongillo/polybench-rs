@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::solvers::lu::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize>(n: usize, A: &mut Array2D<DataType, N, N>) {
     for i in 0..n {
@@ -35,20 +34,19 @@ unsafe fn kernel_lu<const N: usize>(n: usize, A: &mut Array2D<DataType, N, N>) {
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut A = Array2D::<DataType, N, N>::uninit();
 
     unsafe {
         init_array(n, &mut A);
-        let elapsed = util::time_function(|| kernel_lu(n, &mut A));
+        kernel_lu(n, &mut A);
         util::consume(A);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<20>();
 }

@@ -1,9 +1,9 @@
 #![allow(non_snake_case)]
 
+use crate::Float;
 use crate::config::linear_algebra::solvers::cholesky::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize>(n: usize, A: &mut Array2D<DataType, N, N>) {
     for i in 0..n {
@@ -30,24 +30,23 @@ unsafe fn kernel_cholesky<const N: usize>(n: usize, A: &mut Array2D<DataType, N,
         for k in 0..i {
             A[i][i] -= A[i][k] * A[i][k];
         }
-        A[i][i] = A[i][i].sqrt();
+        A[i][i] = Float::sqrt(A[i][i]);
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut A = Array2D::<DataType, N, N>::uninit();
 
     unsafe {
         init_array(n, &mut A);
-        let elapsed = util::time_function(|| kernel_cholesky(n, &mut A));
+        kernel_cholesky(n, &mut A);
         util::consume(A);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<20>();
 }

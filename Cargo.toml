@@ -1,11 +1,27 @@
 [package]
 name = "polybench-rs"
 version = "0.2.0"
-authors = ["Joseph Rafael Ferrer <rafael2x0@gmail.com>"]
-edition = "2018"
+authors = ["Joseph Rafael Ferrer <rafael2x0@gmail.com>", "Nelson Gillo <nelson@gillos.de>"]
+edition = "2024"
 license = "GPLv2"
 
 [features]
-print-result = []
+native = []
+wasm = []
+bmvm = ["bmvm-guest"]
+
+[profile.wasm]
+inherits = "release"
+panic = "abort"
+
+[profile.bmvm]
+inherits = "release"
+panic = "abort"
+
+[profile.native]
+inherits = "release"
 
 [dependencies]
+talc = "4.4.3"
+spin = "0.10.0"
+bmvm-guest = {optional = true, path = "../kvm/bmvm_guest"}

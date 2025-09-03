@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::blas::syrk::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -48,7 +47,7 @@ unsafe fn kernel_syrk<const M: usize, const N: usize>(
     }
 }
 
-pub fn bench<const M: usize, const N: usize>() -> Duration {
+pub fn bench<const M: usize, const N: usize>() {
     let m = M;
     let n = N;
 
@@ -59,13 +58,13 @@ pub fn bench<const M: usize, const N: usize>() -> Duration {
 
     unsafe {
         init_array(m, n, &mut alpha, &mut beta, &mut C, &mut A);
-        let elapsed = util::time_function(|| kernel_syrk(m, n, alpha, beta, &mut C, &A));
+        kernel_syrk(m, n, alpha, beta, &mut C, &A);
         util::consume(C);
-        elapsed
     }
 }
 
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<10, 12>();
 }

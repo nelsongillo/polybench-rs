@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::blas::gemver::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize>(
     n: usize,
@@ -76,7 +75,7 @@ unsafe fn kernel_gemver<const N: usize>(
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut alpha = 0.0;
@@ -96,17 +95,16 @@ pub fn bench<const N: usize>() -> Duration {
             n, &mut alpha, &mut beta, &mut A, &mut u1, &mut v1, &mut u2, &mut v2, &mut w, &mut x,
             &mut y, &mut z,
         );
-        let elapsed = util::time_function(|| {
-            kernel_gemver(
-                n, alpha, beta, &mut A, &u1, &v1, &u2, &v2, &mut w, &mut x, &y, &z,
-            )
-        });
+
+        kernel_gemver(
+            n, alpha, beta, &mut A, &u1, &v1, &u2, &v2, &mut w, &mut x, &y, &z,
+        );
         util::consume(w);
-        elapsed
     }
 }
 
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<20>();
 }

@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::solvers::trisolv::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize>(
     n: usize,
@@ -35,7 +34,7 @@ unsafe fn kernel_trisolv<const N: usize>(
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut L = Array2D::<DataType, N, N>::uninit();
@@ -44,13 +43,12 @@ pub fn bench<const N: usize>() -> Duration {
 
     unsafe {
         init_array(n, &mut L, &mut x, &mut b);
-        let elapsed = util::time_function(|| kernel_trisolv(n, &L, &mut x, &b));
+        kernel_trisolv(n, &L, &mut x, &b);
         util::consume(x);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<20>();
 }

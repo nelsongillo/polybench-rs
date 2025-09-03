@@ -1,15 +1,26 @@
-#![feature(min_const_generics)]
-
+#![cfg_attr(not(feature = "native"), no_main)]
+#![cfg_attr(not(feature = "native"), no_std)]
+extern crate alloc;
 use polybench_rs::datamining::correlation::bench;
+use talc::*;
 
-fn bench_and_print<const M: usize, const N: usize>() {
-    let dims = format!("{:?}", (M, N));
-    let elapsed = bench::<M, N>().as_secs_f64();
-    println!("{:<14} | {:<30} | {:.7} s", "correlation", dims, elapsed);
+const SIZE: usize = 64 * 1024 * 1024;
+static mut ARENA: [u8; SIZE] = [0; SIZE];
+#[global_allocator]
+static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
+    Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
+        .lock();
+
+#[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
+#[unsafe(no_mangle)]
+pub extern "C" fn run() {
+    bench::<1200, 1400>();
 }
 
+#[cfg(feature = "native")]
 fn main() {
-    bench_and_print::<300, 350>();
-    bench_and_print::<600, 700>();
-    bench_and_print::<1200, 1400>();
+    let now = std::time::Instant::now();
+    bench::<1200, 1400>();
+    let elapsed = now.elapsed();
+    print!("{}", elapsed.as_nanos());
 }

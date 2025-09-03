@@ -1,7 +1,6 @@
 use crate::config::linear_algebra::solvers::durbin::DataType;
 use crate::ndarray::{Array1D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const N: usize>(n: usize, r: &mut Array1D<DataType, N>) {
     for i in 0..n {
@@ -14,7 +13,7 @@ unsafe fn kernel_durbin<const N: usize>(
     r: &Array1D<DataType, N>,
     y: &mut Array1D<DataType, N>,
 ) {
-    let mut z: [DataType; N] = std::mem::MaybeUninit::uninit().assume_init();
+    let mut z: [DataType; N] = unsafe { core::mem::MaybeUninit::uninit().assume_init() };
 
     y[0] = -r[0];
     let mut beta = 1.0;
@@ -37,7 +36,7 @@ unsafe fn kernel_durbin<const N: usize>(
     }
 }
 
-pub fn bench<const N: usize>() -> Duration {
+pub fn bench<const N: usize>() {
     let n = N;
 
     let mut r = Array1D::<DataType, N>::uninit();
@@ -45,13 +44,12 @@ pub fn bench<const N: usize>() -> Duration {
 
     unsafe {
         init_array(n, &mut r);
-        let elapsed = util::time_function(|| kernel_durbin(n, &r, &mut y));
+        kernel_durbin(n, &r, &mut y);
         util::consume(y);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<20>();
 }

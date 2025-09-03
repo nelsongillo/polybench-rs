@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::kernels::bicg::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -44,7 +43,7 @@ unsafe fn kernel_bicg<const M: usize, const N: usize>(
     }
 }
 
-pub fn bench<const M: usize, const N: usize>() -> Duration {
+pub fn bench<const M: usize, const N: usize>() {
     let m = M;
     let n = N;
 
@@ -56,14 +55,13 @@ pub fn bench<const M: usize, const N: usize>() -> Duration {
 
     unsafe {
         init_array(m, n, &mut A, &mut r, &mut p);
-        let elapsed = util::time_function(|| kernel_bicg(m, n, &A, &mut s, &mut q, &p, &r));
+        kernel_bicg(m, n, &A, &mut s, &mut q, &p, &r);
         util::consume(s);
         util::consume(q);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<19, 21>();
 }

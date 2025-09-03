@@ -1,7 +1,7 @@
+use crate::Float;
 use crate::config::datamining::correlation::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -41,7 +41,7 @@ unsafe fn kernel_correlation<const M: usize, const N: usize>(
         for i in 0..m {
             stddev[j] += (data[i][j] - mean[j]) * (data[i][j] - mean[j]);
             stddev[j] /= float_n;
-            stddev[j] = stddev[j].sqrt();
+            stddev[j] = Float::sqrt(stddev[j]);
             stddev[j] = if stddev[j] <= eps { 1.0 } else { stddev[j] };
         }
     }
@@ -49,7 +49,7 @@ unsafe fn kernel_correlation<const M: usize, const N: usize>(
     for i in 0..m {
         for j in 0..n {
             data[i][j] -= mean[j];
-            data[i][j] /= float_n.sqrt() * stddev[j];
+            data[i][j] /= Float::sqrt(float_n) * stddev[j];
         }
     }
 
@@ -66,7 +66,7 @@ unsafe fn kernel_correlation<const M: usize, const N: usize>(
     corr[n - 1][n - 1] = 1.0;
 }
 
-pub fn bench<const M: usize, const N: usize>() -> Duration {
+pub fn bench<const M: usize, const N: usize>() {
     let m = M;
     let n = N;
 
@@ -78,15 +78,13 @@ pub fn bench<const M: usize, const N: usize>() -> Duration {
 
     unsafe {
         init_array(m, n, &mut float_n, &mut data);
-        let elapsed = util::time_function(|| {
-            kernel_correlation(m, n, float_n, &mut data, &mut corr, &mut mean, &mut stddev)
-        });
+        kernel_correlation(m, n, float_n, &mut data, &mut corr, &mut mean, &mut stddev);
         util::consume(corr);
-        elapsed
     }
 }
 
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<12, 14>();
 }

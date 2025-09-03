@@ -3,7 +3,6 @@
 use crate::config::linear_algebra::kernels::atax::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
 use crate::util;
-use std::time::Duration;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -44,7 +43,7 @@ unsafe fn kernel_atax<const M: usize, const N: usize>(
     }
 }
 
-pub fn bench<const M: usize, const N: usize>() -> Duration {
+pub fn bench<const M: usize, const N: usize>() {
     let m = M;
     let n = N;
 
@@ -55,13 +54,12 @@ pub fn bench<const M: usize, const N: usize>() -> Duration {
 
     unsafe {
         init_array(m, n, &mut A, &mut x);
-        let elapsed = util::time_function(|| kernel_atax(m, n, &A, &x, &mut y, &mut tmp));
+        kernel_atax(m, n, &A, &x, &mut y, &mut tmp);
         util::consume(y);
-        elapsed
     }
 }
-
-#[test]
+#[allow(dead_code)]
+#[cfg_attr(test, test)]
 fn check() {
     bench::<19, 21>();
 }
