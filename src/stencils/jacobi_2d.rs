@@ -2,7 +2,7 @@
 
 use crate::config::stencils::jacobi_2d::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const N: usize, const TSTEPS: usize>(
     n: usize,
@@ -47,7 +47,7 @@ pub fn bench<const N: usize, const TSTEPS: usize>() {
     unsafe {
         init_array::<N, TSTEPS>(n, &mut A, &mut B);
         kernel_jacobi_2d::<N, TSTEPS>(tsteps, n, &mut A, &mut B);
-        util::consume(A);
+        consume(A);
     }
 }
 #[allow(dead_code)]

@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::kernels::_2mm::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const NI: usize, const NJ: usize, const NK: usize, const NL: usize>(
     ni: usize,
@@ -90,7 +90,7 @@ pub fn bench<const NI: usize, const NJ: usize, const NK: usize, const NL: usize>
             ni, nj, nk, nl, &mut alpha, &mut beta, &mut A, &mut B, &mut C, &mut D,
         );
         kernel_2mm(ni, nj, nk, nl, alpha, beta, &mut tmp, &A, &B, &C, &mut D);
-        util::consume(D);
+        consume(D);
     }
 }
 

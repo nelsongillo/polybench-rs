@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::kernels::bicg::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -56,8 +56,8 @@ pub fn bench<const M: usize, const N: usize>() {
     unsafe {
         init_array(m, n, &mut A, &mut r, &mut p);
         kernel_bicg(m, n, &A, &mut s, &mut q, &p, &r);
-        util::consume(s);
-        util::consume(q);
+        consume(s);
+        consume(q);
     }
 }
 #[allow(dead_code)]

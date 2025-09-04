@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::kernels::_3mm::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<
     const NI: usize,
@@ -113,7 +113,7 @@ pub fn bench<
     unsafe {
         init_array(ni, nj, nk, nl, nm, &mut A, &mut B, &mut C, &mut D);
         kernel_3mm(ni, nj, nk, nl, nm, &mut E, &A, &B, &mut F, &C, &D, &mut G);
-        util::consume(G);
+        consume(G);
     }
 }
 

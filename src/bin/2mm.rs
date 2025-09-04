@@ -15,16 +15,21 @@ static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
     Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
         .lock();
 
+const NI: usize = 400;
+const NJ: usize = 450;
+const NK: usize = 500;
+const NL: usize = 550;
+
 #[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
 #[unsafe(no_mangle)]
 pub extern "C" fn run() {
-    bench::<800, 900, 1000, 1100>();
+    bench::<NI, NJ, NK, NL>();
 }
 
 #[cfg(feature = "native")]
 fn main() {
     let now = std::time::Instant::now();
-    bench::<800, 900, 1000, 1100>();
+    bench::<NI, NJ, NK, NL>();
     let elapsed = now.elapsed();
     print!("{}", elapsed.as_nanos());
 }

@@ -1,6 +1,6 @@
 use crate::config::stencils::fdtd_2d::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const NX: usize, const NY: usize, const TMAX: usize>(
     tmax: usize,
@@ -67,9 +67,9 @@ pub fn bench<const NX: usize, const NY: usize, const TMAX: usize>() {
     unsafe {
         init_array(tmax, nx, ny, &mut ex, &mut ey, &mut hz, &mut fict);
         kernel_fdtd_2d(tmax, nx, ny, &mut ex, &mut ey, &mut hz, &fict);
-        util::consume(ex);
-        util::consume(ey);
-        util::consume(hz);
+        consume(ex);
+        consume(ey);
+        consume(hz);
     }
 }
 #[allow(dead_code)]

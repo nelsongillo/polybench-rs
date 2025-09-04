@@ -12,16 +12,19 @@ static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
     Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
         .lock();
 
+const H: usize = 2048;
+const W: usize = 1080;
+
 #[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
 #[unsafe(no_mangle)]
 pub extern "C" fn run() {
-    bench::<4096, 2160>();
+    bench::<H, W>();
 }
 
 #[cfg(feature = "native")]
 fn main() {
     let now = std::time::Instant::now();
-    bench::<4096, 2160>();
+    bench::<H, W>();
     let elapsed = now.elapsed();
     print!("{}", elapsed.as_nanos());
 }

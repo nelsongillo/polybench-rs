@@ -2,7 +2,7 @@
 
 use crate::config::stencils::heat_3d::DataType;
 use crate::ndarray::{Array3D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const N: usize, const TSTEPS: usize>(
     n: usize,
@@ -59,7 +59,7 @@ pub fn bench<const N: usize, const TSTEPS: usize>() {
     unsafe {
         init_array::<N, TSTEPS>(n, &mut A, &mut B);
         kernel_heat_3d::<N, TSTEPS>(tsteps, n, &mut A, &mut B);
-        util::consume(A);
+        consume(A);
     }
 }
 #[allow(dead_code)]

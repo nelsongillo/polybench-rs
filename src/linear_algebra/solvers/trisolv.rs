@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::solvers::trisolv::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const N: usize>(
     n: usize,
@@ -44,7 +44,7 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut L, &mut x, &mut b);
         kernel_trisolv(n, &L, &mut x, &b);
-        util::consume(x);
+        consume(x);
     }
 }
 #[allow(dead_code)]

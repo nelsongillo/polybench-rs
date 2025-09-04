@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::kernels::atax::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -55,7 +55,7 @@ pub fn bench<const M: usize, const N: usize>() {
     unsafe {
         init_array(m, n, &mut A, &mut x);
         kernel_atax(m, n, &A, &x, &mut y, &mut tmp);
-        util::consume(y);
+        consume(y);
     }
 }
 #[allow(dead_code)]

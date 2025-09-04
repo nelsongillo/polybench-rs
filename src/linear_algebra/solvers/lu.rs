@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::solvers::lu::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const N: usize>(n: usize, A: &mut Array2D<DataType, N, N>) {
     for i in 0..n {
@@ -42,7 +42,7 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut A);
         kernel_lu(n, &mut A);
-        util::consume(A);
+        consume(A);
     }
 }
 #[allow(dead_code)]

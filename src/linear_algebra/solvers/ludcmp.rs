@@ -4,7 +4,7 @@ use core::iter::Iterator;
 
 use crate::config::linear_algebra::solvers::ludcmp::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const N: usize>(
     n: usize,
@@ -87,7 +87,7 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut A, &mut b, &mut x, &mut y);
         kernel_ludcmp(n, &mut A, &b, &mut x, &mut y);
-        util::consume(x);
+        consume(x);
     }
 }
 #[allow(dead_code)]

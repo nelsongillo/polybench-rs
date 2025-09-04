@@ -1,9 +1,8 @@
 use core::iter::Iterator;
 
-use crate::Float;
 use crate::config::medley::deriche::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::{Float, consume};
 
 unsafe fn init_array<const H: usize, const W: usize>(
     w: usize,
@@ -132,7 +131,7 @@ pub fn bench<const H: usize, const W: usize>() {
     unsafe {
         init_array(w, h, &mut alpha, &mut img_in);
         kernel_deriche(w, h, alpha, &img_in, &mut img_out, &mut y1, &mut y2);
-        util::consume(img_out);
+        consume(img_out);
     }
 }
 #[allow(dead_code)]

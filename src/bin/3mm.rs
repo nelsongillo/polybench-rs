@@ -14,16 +14,22 @@ static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
 
 use polybench_rs::linear_algebra::kernels::_3mm::bench;
 
+const NI: usize = 400;
+const NJ: usize = 450;
+const NK: usize = 500;
+const NL: usize = 550;
+const NM: usize = 600;
+
 #[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
 #[unsafe(no_mangle)]
 pub extern "C" fn run() {
-    bench::<800, 900, 1000, 1100, 1200>();
+    bench::<NI, NJ, NK, NL, NM>();
 }
 
 #[cfg(feature = "native")]
 fn main() {
     let now = std::time::Instant::now();
-    bench::<800, 900, 1000, 1100, 1200>();
+    bench::<NI, NJ, NK, NL, NM>();
     let elapsed = now.elapsed();
     print!("{}", elapsed.as_nanos());
 }

@@ -1,6 +1,6 @@
 use crate::config::datamining::covariance::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util;
+use crate::util::consume;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -62,7 +62,7 @@ pub fn bench<const M: usize, const N: usize>() {
     unsafe {
         init_array(m, n, &mut float_n, &mut data);
         kernel_covariance(m, n, float_n, &mut data, &mut cov, &mut mean);
-        util::consume(cov);
+        consume(cov);
     }
 }
 
