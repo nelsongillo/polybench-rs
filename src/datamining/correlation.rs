@@ -1,6 +1,7 @@
 use crate::config::datamining::correlation::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util::{Float, consume};
+use crate::util::Float;
+// use crate::util::consume;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -78,7 +79,7 @@ pub fn bench<const M: usize, const N: usize>() {
     unsafe {
         init_array(m, n, &mut float_n, &mut data);
         kernel_correlation(m, n, float_n, &mut data, &mut corr, &mut mean, &mut stddev);
-        consume(corr);
+        // consume(corr);
     }
 }
 

@@ -3,7 +3,7 @@ use core::iter::Iterator;
 
 use crate::config::stencils::adi::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const N: usize, const TSTEPS: usize>(
     n: usize,
@@ -89,7 +89,7 @@ pub fn bench<const N: usize, const TSTEPS: usize>() {
     unsafe {
         init_array::<N, TSTEPS>(n, &mut u);
         kernel_adi::<N, TSTEPS>(tsteps, n, &mut u, &mut v, &mut p, &mut q);
-        consume(u);
+        // consume(u);
     }
 }
 #[allow(dead_code)]

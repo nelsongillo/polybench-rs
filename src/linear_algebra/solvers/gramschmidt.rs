@@ -2,7 +2,8 @@
 
 use crate::config::linear_algebra::solvers::gramschmidt::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util::{Float, consume};
+use crate::util::Float;
+// use crate::util::consume;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -63,9 +64,9 @@ pub fn bench<const M: usize, const N: usize>() {
     unsafe {
         init_array(m, n, &mut A, &mut R, &mut Q);
         kernel_gramschmidt(m, n, &mut A, &mut R, &mut Q);
-        consume(A);
-        consume(R);
-        consume(Q);
+        // consume(A);
+        // consume(R);
+        // consume(Q);
     }
 }
 #[allow(dead_code)]

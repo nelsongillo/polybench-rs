@@ -2,7 +2,7 @@ use core::iter::Iterator;
 
 use crate::config::medley::nussinov::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 type Base = i8;
 
@@ -74,7 +74,7 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut seq, &mut table);
         kernel_nussinov(n, &seq, &mut table);
-        consume(table);
+        // consume(table);
     }
 }
 #[allow(dead_code)]

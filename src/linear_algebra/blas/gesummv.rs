@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::blas::gesummv::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const N: usize>(
     n: usize,
@@ -58,7 +58,7 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut alpha, &mut beta, &mut A, &mut B, &mut x);
         kernel_gesummv(n, alpha, beta, &A, &B, &mut tmp, &x, &mut y);
-        consume(y);
+        // consume(y);
     }
 }
 

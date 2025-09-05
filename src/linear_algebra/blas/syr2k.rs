@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::blas::syr2k::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -63,7 +63,7 @@ pub fn bench<const M: usize, const N: usize>() {
     unsafe {
         init_array(m, n, &mut alpha, &mut beta, &mut C, &mut A, &mut B);
         kernel_syr2k(m, n, alpha, beta, &mut C, &A, &B);
-        consume(C);
+        // consume(C);
     }
 }
 

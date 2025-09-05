@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::blas::gemm::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const NI: usize, const NJ: usize, const NK: usize>(
     ni: usize,
@@ -67,7 +67,7 @@ pub fn bench<const NI: usize, const NJ: usize, const NK: usize>() {
     unsafe {
         init_array(ni, nj, nk, &mut alpha, &mut beta, &mut C, &mut A, &mut B);
         kernel_gemm(ni, nj, nk, alpha, beta, &mut C, &A, &B);
-        consume(C);
+        // consume(C);
     }
 }
 

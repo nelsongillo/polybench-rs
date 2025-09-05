@@ -1,6 +1,6 @@
 use crate::config::linear_algebra::solvers::durbin::DataType;
 use crate::ndarray::{Array1D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const N: usize>(n: usize, r: &mut Array1D<DataType, N>) {
     for i in 0..n {
@@ -45,7 +45,7 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut r);
         kernel_durbin(n, &r, &mut y);
-        consume(y);
+        // consume(y);
     }
 }
 #[allow(dead_code)]

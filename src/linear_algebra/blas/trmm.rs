@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::blas::trmm::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const M: usize, const N: usize>(
     m: usize,
@@ -51,7 +51,7 @@ pub fn bench<const M: usize, const N: usize>() {
     unsafe {
         init_array(m, n, &mut alpha, &mut A, &mut B);
         kernel_trmm(m, n, alpha, &A, &mut B);
-        consume(B);
+        // consume(B);
     }
 }
 

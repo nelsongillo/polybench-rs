@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::kernels::doitgen::DataType;
 use crate::ndarray::{Array1D, Array2D, Array3D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const NP: usize, const NQ: usize, const NR: usize>(
     nr: usize,
@@ -60,7 +60,7 @@ pub fn bench<const NP: usize, const NQ: usize, const NR: usize>() {
     unsafe {
         init_array(nr, nq, np, &mut A, &mut C4);
         kernel_doitgen(nr, nq, np, &mut A, &C4, &mut sum);
-        consume(A);
+        // consume(A);
     }
 }
 #[allow(dead_code)]

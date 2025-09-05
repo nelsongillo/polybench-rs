@@ -1,6 +1,6 @@
 use crate::config::medley::floyd_warshall::DataType;
 use crate::ndarray::{Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const N: usize>(n: usize, path: &mut Array2D<DataType, N, N>) {
     for i in 0..n {
@@ -35,7 +35,7 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut path);
         kernel_floyd_warshall(n, &mut path);
-        consume(path);
+        // consume(path);
     }
 }
 

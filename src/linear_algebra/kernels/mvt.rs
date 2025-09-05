@@ -2,7 +2,7 @@
 
 use crate::config::linear_algebra::kernels::mvt::DataType;
 use crate::ndarray::{Array1D, Array2D, ArrayAlloc};
-use crate::util::consume;
+// use crate::util::consume;
 
 unsafe fn init_array<const N: usize>(
     n: usize,
@@ -55,8 +55,8 @@ pub fn bench<const N: usize>() {
     unsafe {
         init_array(n, &mut x1, &mut x2, &mut y_1, &mut y_2, &mut A);
         kernel_mvt(n, &mut x1, &mut x2, &y_1, &y_2, &A);
-        consume(x1);
-        consume(x2);
+        // consume(x1);
+        // consume(x2);
     }
 }
 #[allow(dead_code)]
