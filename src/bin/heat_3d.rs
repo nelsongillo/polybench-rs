@@ -17,7 +17,7 @@ const N: usize = 60;
 const TSTEPS: usize = 50;
 
 #[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
-#[cfg(not(feature = "native"))]
+#[unsafe(no_mangle)]
 pub extern "C" fn run() {
     bench::<N, TSTEPS>();
 }
