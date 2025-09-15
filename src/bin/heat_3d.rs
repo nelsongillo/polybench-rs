@@ -17,7 +17,6 @@ const N: usize = 60;
 const TSTEPS: usize = 50;
 
 #[cfg_attr(feature = "bmvm", bmvm_guest::expose)]
-#[cfg_attr(feature = "wasm", inline)]
 #[cfg(not(feature = "native"))]
 pub extern "C" fn run() {
     bench::<N, TSTEPS>();
