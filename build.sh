@@ -7,16 +7,16 @@ if [ $# -ne 1 ]; then
 fi
 
 profile="$1"
-target=""
+addargs=""
 files="src/bin/*.rs"
 
 # Validate profile
 case "$profile" in
     wasm)
-        target="--target=wasm32-unknown-unknown"
+        addargs="--target=wasm32-unknown-unknown"
         ;;
     bmvm)
-        target="--target=x86_64-unknown-none"
+        addargs="-Zbuild-std=core,alloc,compiler_builtins --target ./bmvm.json"
         ;;
     native)
         ;;
@@ -33,6 +33,6 @@ for file in $files; do
         filename=$(basename "$file")    # strip directory
         base="${filename%.*}"           # strip extension
         echo "$base"
-        cargo build --bin "$base" --profile="$profile" --features="$profile" $target
+        cargo build --bin "$base" --profile="$profile" --features="$profile" $addargs
   fi
 done
