@@ -9,6 +9,12 @@ license = "GPLv2"
 native = []
 wasm = []
 bmvm = ["bmvm-guest"]
+links1 = []
+links8 = []
+links16 = []
+links32 = []
+links64 = []
+links128 = []
 
 [profile.wasm]
 inherits = "release"
@@ -24,4 +30,5 @@ inherits = "release"
 [dependencies]
 talc = "4.4.3"
 spin = "0.10.0"
+seq-macro = "0.3.6"
 bmvm-guest = {optional = true, path = "../kvm/bmvm_guest"}
