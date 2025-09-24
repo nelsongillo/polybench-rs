@@ -3,7 +3,7 @@
 extern crate alloc;
 use talc::*;
 
-use polybench_rs::linear_algebra::solvers::cholesky::bench;
+use polybench_rs::datamining::correlation::bench;
 
 const SIZE: usize = 64 * 1024 * 1024;
 static mut ARENA: [u8; SIZE] = [0; SIZE];
@@ -12,69 +12,67 @@ static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
     Talc::new(unsafe { ClaimOnOom::new(Span::from_array(core::ptr::addr_of!(ARENA).cast_mut())) })
         .lock();
 
-const N: usize = 1000;
-
-use bmvm_guest::{expose, host};
+const M: usize = 600;
+const N: usize = 700;
 
 #[cfg(feature = "links1")]
 seq_macro::seq!(N in 0..1 {
-    #[expose]
+    #[unsafe(no_mangle)]
     pub extern "C" fn up~N() -> i32 {
-        bench::<N>();
-        N
+            bench::<M, N>();
+        unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links8")]
 seq_macro::seq!(N in 0..8 {
-    #[expose]
-    pub fn up~N() -> i32 {
-        bench::<N>();
-        N
+    #[unsafe(no_mangle)]
+     pub extern "C" fn up~N() -> i32 {
+            bench::<M, N>();
+        unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links16")]
 seq_macro::seq!(N in 0..16 {
-    #[expose]
-    pub fn up~N() -> i32 {
-        bench::<N>();
-        N
+    #[unsafe(no_mangle)]
+     pub extern "C" fn up~N() -> i32 {
+            bench::<M, N>();
+        unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links32")]
 seq_macro::seq!(N in 0..32 {
-    #[expose]
-    pub fn up~N() -> i32 {
-        bench::<N>();
-        N
+    #[unsafe(no_mangle)]
+     pub extern "C" fn up~N() -> i32 {
+            bench::<M, N>();
+        unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links64")]
 seq_macro::seq!(N in 0..64 {
-    #[expose]
-    pub fn up~N() -> i32 {
-        bench::<N>();
-        N
+    #[unsafe(no_mangle)]
+     pub extern "C" fn up~N() -> i32 {
+            bench::<M, N>();
+        unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links128")]
 seq_macro::seq!(N in 0..128 {
-    #[expose]
-    pub fn up~N() -> i32 {
-        bench::<N>();
-        N
+    #[unsafe(no_mangle)]
+     pub extern "C" fn up~N() -> i32 {
+            bench::<M, N>();
+        unsafe { hyper~N() + 1 }
     }
 });
 
-#[host]
 unsafe extern "C" {
     #[cfg(feature = "links1")]
     seq_macro::seq!(N in 0..1 {
-        fn hyper~N() -> i32;
+         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links8")]
