@@ -15,88 +15,77 @@ static ALLOCATOR: Talck<spin::Mutex<()>, ClaimOnOom> =
 const M: usize = 600;
 const N: usize = 700;
 
-#[cfg(feature = "links1")]
-seq_macro::seq!(N in 0..1 {
-    #[unsafe(no_mangle)]
-    pub extern "C" fn up~N() -> i32 {
-            bench::<M, N>();
-        unsafe { hyper~N() + 1 }
-    }
-});
+#[unsafe(no_mangle)]
+pub extern "C" fn up0() -> i32 {
+    bench::<M, N>();
+    unsafe { hyper0() + 1 }
+}
 
 #[cfg(feature = "links8")]
-seq_macro::seq!(N in 0..8 {
+seq_macro::seq!(N in 1..8 {
     #[unsafe(no_mangle)]
      pub extern "C" fn up~N() -> i32 {
-            bench::<M, N>();
         unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links16")]
-seq_macro::seq!(N in 0..16 {
+seq_macro::seq!(N in 1..16 {
     #[unsafe(no_mangle)]
      pub extern "C" fn up~N() -> i32 {
-            bench::<M, N>();
         unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links32")]
-seq_macro::seq!(N in 0..32 {
+seq_macro::seq!(N in 1..32 {
     #[unsafe(no_mangle)]
      pub extern "C" fn up~N() -> i32 {
-            bench::<M, N>();
         unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links64")]
-seq_macro::seq!(N in 0..64 {
+seq_macro::seq!(N in 1..64 {
     #[unsafe(no_mangle)]
      pub extern "C" fn up~N() -> i32 {
-            bench::<M, N>();
         unsafe { hyper~N() + 1 }
     }
 });
 
 #[cfg(feature = "links128")]
-seq_macro::seq!(N in 0..128 {
+seq_macro::seq!(N in 1..128 {
     #[unsafe(no_mangle)]
      pub extern "C" fn up~N() -> i32 {
-            bench::<M, N>();
         unsafe { hyper~N() + 1 }
     }
 });
 
 unsafe extern "C" {
-    #[cfg(feature = "links1")]
-    seq_macro::seq!(N in 0..1 {
-         fn hyper~N() -> i32;
-    });
+    fn hyper0() -> i32;
 
     #[cfg(feature = "links8")]
-    seq_macro::seq!(N in 0..8 {
+    seq_macro::seq!(N in 1..8 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links16")]
-    seq_macro::seq!(N in 0..16 {
+    seq_macro::seq!(N in 1..16 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links32")]
-    seq_macro::seq!(N in 0..32 {
+    seq_macro::seq!(N in 1..32 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links64")]
-    seq_macro::seq!(N in 0..64 {
+    seq_macro::seq!(N in 1..64 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links128")]
-    seq_macro::seq!(N in 0..128 {
+    seq_macro::seq!(N in 1..128 {
         fn hyper~N() -> i32;
     });
 }
