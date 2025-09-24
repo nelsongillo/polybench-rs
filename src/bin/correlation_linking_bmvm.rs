@@ -24,7 +24,7 @@ pub extern "C" fn up0() -> i32 {
 }
 
 #[cfg(feature = "links8")]
-seq_macro::seq!(N in 1....8 {
+seq_macro::seq!(N in 1..8 {
     #[expose]
     pub fn up~N() -> i32 {
         bench::<M, N>();
@@ -33,7 +33,7 @@ seq_macro::seq!(N in 1....8 {
 });
 
 #[cfg(feature = "links16")]
-seq_macro::seq!(N in 1....16 {
+seq_macro::seq!(N in 1..16 {
     #[expose]
     pub fn up~N() -> i32 {
         bench::<M, N>();
@@ -42,7 +42,7 @@ seq_macro::seq!(N in 1....16 {
 });
 
 #[cfg(feature = "links32")]
-seq_macro::seq!(N in 1....32 {
+seq_macro::seq!(N in 1..32 {
     #[expose]
     pub fn up~N() -> i32 {
         bench::<M, N>();
@@ -51,7 +51,7 @@ seq_macro::seq!(N in 1....32 {
 });
 
 #[cfg(feature = "links64")]
-seq_macro::seq!(N in 1....64 {
+seq_macro::seq!(N in 1..64 {
     #[expose]
     pub fn up~N() -> i32 {
         bench::<M, N>();
@@ -60,7 +60,7 @@ seq_macro::seq!(N in 1....64 {
 });
 
 #[cfg(feature = "links128")]
-seq_macro::seq!(N in 1....128 {
+seq_macro::seq!(N in 1..128 {
     #[expose]
     pub fn up~N() -> i32 {
         bench::<M, N>();
@@ -73,27 +73,27 @@ unsafe extern "C" {
     fn hyper0() -> i32;
 
     #[cfg(feature = "links8")]
-    seq_macro::seq!(N in 1....8 {
+    seq_macro::seq!(N in 1..8 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links16")]
-    seq_macro::seq!(N in 1....16 {
+    seq_macro::seq!(N in 1..16 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links32")]
-    seq_macro::seq!(N in 1....32 {
+    seq_macro::seq!(N in 1..32 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links64")]
-    seq_macro::seq!(N in 1....64 {
+    seq_macro::seq!(N in 1..64 {
         fn hyper~N() -> i32;
     });
 
     #[cfg(feature = "links128")]
-    seq_macro::seq!(N in 1....128 {
+    seq_macro::seq!(N in 1..128 {
         fn hyper~N() -> i32;
     });
 }
